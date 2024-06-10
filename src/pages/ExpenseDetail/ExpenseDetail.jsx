@@ -1,75 +1,51 @@
-import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { AlertModal, ConfirmModal } from "@components/Modal";
-import dateValidator from "@components/dateValidator";
-import useExpenseDetail from "@components/hooks/useExpenseDetail";
 import { removeExpense, updateExpense } from "@redux/slices/fetchedDataSlice";
-import {
-  closeAlertModal,
-  closeConfirmModal,
-  openAlertModal,
-  openConfirmModal,
-} from "@redux/slices/modalSlice";
+import { closeConfirmModal, openConfirmModal } from "@redux/slices/modalSlice";
+import useExpenseDetail from "../../hooks/useExpenseDetail";
+
+import { useRef } from "react";
+import { toast } from "react-toastify";
+import useExpenseForm from "../../hooks/useExpenseForm";
 import { StrForm } from "./ExpenseDetail.styled";
 
 function ExpenseDetail() {
   const { itemId } = useParams();
-  const expense = useExpenseDetail(itemId);
+  const originalExpense = useExpenseDetail(itemId);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isConfirmModalOpen } = useSelector((state) => state.modal);
+
+  const {
+    expense,
+    handleInputChange,
+    handleFormSubmit,
+    isAlertModalOpen,
+    alertMessage,
+    closeAlertModal,
+  } = useExpenseForm(originalExpense, onSubmit);
+
   const dateRef = useRef(null);
   const itemRef = useRef(null);
   const amountRef = useRef(null);
   const descriptionRef = useRef(null);
 
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { isConfirmModalOpen, isAlertModalOpen, alertMessage } = useSelector(
-    (state) => state.modal
-  );
-
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
-
-    const modifiedDate = dateRef.current.value;
-    const modifiedItem = itemRef.current.value;
-    const modifiedAmount = amountRef.current.value;
-    const modifiedDescription = descriptionRef.current.value;
-
-    if (
-      !modifiedDate ||
-      !modifiedItem ||
-      !modifiedAmount ||
-      !modifiedDescription
-    ) {
-      dispatch(openAlertModal("수정할 내용을 모두 작성해주세요."));
-      return;
-    }
-
-    const dateValidationError = dateValidator(modifiedDate);
-    if (dateValidationError) {
-      dispatch(openAlertModal(dateValidationError));
-      return;
-    }
-
-    const modifiedExpense = {
-      id: expense.id,
-      date: modifiedDate,
-      item: modifiedItem,
-      amount: modifiedAmount,
-      description: modifiedDescription,
-    };
+  function onSubmit(modifiedExpense) {
     dispatch(updateExpense(modifiedExpense));
+    toast.success("수정이 완료되었습니다.");
     navigate("/");
-  };
+  }
 
   const handleDelete = () => {
     dispatch(openConfirmModal());
   };
 
   const handleConfirmDelete = () => {
-    dispatch(removeExpense(expense));
+    dispatch(removeExpense(originalExpense));
     dispatch(closeConfirmModal());
+    toast.warn("삭제 되었습니다.");
     navigate("/");
   };
 
@@ -88,6 +64,7 @@ function ExpenseDetail() {
           defaultValue={expense.date}
           placeholder="YYYY-MM-DD"
           ref={dateRef}
+          onChange={handleInputChange}
         />
         <label htmlFor="item">항목</label>
         <input

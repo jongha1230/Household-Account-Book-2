@@ -36,7 +36,7 @@ function ExpenseSummaryByMonth({ filterMonth }) {
           ? category
           : "기타";
 
-        acc[categoryName] += amount;
+        acc[categoryName] += +amount;
 
         return acc;
       },
@@ -46,7 +46,7 @@ function ExpenseSummaryByMonth({ filterMonth }) {
     setTotalMonthlyExpense(
       formattedAmount(
         Object.values(updatedCategoryExpenses).reduce(
-          (acc, current) => acc + current,
+          (acc, current) => +acc + +current,
           0
         )
       )
@@ -59,7 +59,7 @@ function ExpenseSummaryByMonth({ filterMonth }) {
 
   const calculateCategoryPercentage = (categoryExpense) => {
     const totalExpense = Object.values(categoryExpenses).reduce(
-      (acc, current) => acc + current,
+      (acc, current) => +acc + +current,
       0
     );
 

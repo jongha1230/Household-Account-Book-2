@@ -8,7 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@components": fileURLToPath(
-        new URL("./src/assets/components", import.meta.url)
+        new URL("./src/components", import.meta.url)
       ),
       "@redux": fileURLToPath(new URL("./src/redux", import.meta.url)),
     },

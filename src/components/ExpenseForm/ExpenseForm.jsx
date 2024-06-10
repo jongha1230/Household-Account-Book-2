@@ -1,75 +1,32 @@
-import { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { v4 as uuidv4 } from "uuid";
-
-import { addExpense } from "@redux/slices/fetchedDataSlice";
-
 import { AlertModal } from "@components/Modal";
-import { closeAlertModal, openAlertModal } from "@redux/slices/modalSlice";
-
-import dateValidator from "@components/dateValidator";
+import { addExpense } from "@redux/slices/fetchedDataSlice";
+import { useRef } from "react";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import { v4 as uuidv4 } from "uuid";
+import useExpenseForm from "../../hooks/useExpenseForm";
 import { StrForm } from "./ExpenseForm.styled";
 
 function ExpenseForm() {
-  const [expense, setExpense] = useState({
-    date: "",
-    item: "",
-    amount: "",
-    description: "",
-  });
+  const initialExpense = { date: "", item: "", amount: "", description: "" };
+  const {
+    expense,
+    setExpense,
+    handleInputChange,
+    handleFormSubmit,
+    isAlertModalOpen,
+    alertMessage,
+    closeAlertModal,
+  } = useExpenseForm(initialExpense, onSubmit);
 
   const dateInputRef = useRef(null);
   const dispatch = useDispatch();
-  const { isAlertModalOpen, alertMessage } = useSelector(
-    (state) => state.modal
-  );
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setExpense((prevExpense) => ({
-      ...prevExpense,
-      [name]: value,
-    }));
-  };
-
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
-    const { date, item, amount, description } = expense;
-
-    // 유효성 검사
-    if (!date || !item || !amount || !description) {
-      dispatch(openAlertModal("입력창을 모두 작성해주세요."));
-    }
-    // 날짜 유효성 검사
-    const dateValidationError = dateValidator(date);
-    if (dateValidationError) {
-      dispatch(openAlertModal(dateValidationError));
-      return;
-    }
-
-    const newExpense = {
-      id: uuidv4(),
-      date,
-      item,
-      amount: parseFloat(amount),
-      description,
-    };
-
-    dispatch(addExpense(newExpense));
-
-    setExpense({
-      date: "",
-      item: "",
-      amount: "",
-      description: "",
-    });
-  };
-
-  useEffect(() => {
-    if (expense.date === "") {
-      dateInputRef.current.focus();
-    }
-  }, [expense.date]);
+  function onSubmit(newExpense) {
+    dispatch(addExpense({ id: uuidv4(), ...newExpense }));
+    toast.success("등록되었습니다.");
+    setExpense(initialExpense);
+  }
 
   return (
     <>

@@ -2,7 +2,7 @@ import ExpenseForm from "@components/ExpenseForm";
 import ExpenseListByMonth from "@components/ExpenseListByMonth";
 import ExpenseSummaryByMonth from "@components/ExpenseSummaryByMonth";
 import MonthlyExpenses from "@components/MonthlyExpenses";
-import { useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 const StrMain = styled.main`
@@ -17,21 +17,26 @@ const StrSection = styled.section`
   padding: 20px;
 `;
 
+const MemoizedExpenseForm = React.memo(ExpenseForm);
+const MemoizedMonthlyExpenses = React.memo(MonthlyExpenses);
+const MemoizedExpenseSummaryByMonth = React.memo(ExpenseSummaryByMonth);
+const MemoizedExpenseListByMonth = React.memo(ExpenseListByMonth);
+
 function Homepage() {
   const [filterMonth, setFilterMonth] = useState("");
   return (
     <StrMain>
       <StrSection>
-        <ExpenseForm />
+        <MemoizedExpenseForm />
       </StrSection>
       <StrSection>
-        <MonthlyExpenses setFilterMonth={setFilterMonth} />
+        <MemoizedMonthlyExpenses setFilterMonth={setFilterMonth} />
       </StrSection>
       <StrSection>
-        <ExpenseSummaryByMonth filterMonth={filterMonth} />
+        <MemoizedExpenseSummaryByMonth filterMonth={filterMonth} />
       </StrSection>
       <StrSection>
-        <ExpenseListByMonth filterMonth={filterMonth} />
+        <MemoizedExpenseListByMonth filterMonth={filterMonth} />
       </StrSection>
     </StrMain>
   );

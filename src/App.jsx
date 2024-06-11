@@ -19,7 +19,9 @@ const fetchUser = async (token) => {
 
 function App() {
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.auth.accessToken);
+  const token =
+    useSelector((state) => state.auth.accessToken) ??
+    localStorage.getItem("accessToken");
 
   const { data } = useQuery({
     queryKey: ["user", token],

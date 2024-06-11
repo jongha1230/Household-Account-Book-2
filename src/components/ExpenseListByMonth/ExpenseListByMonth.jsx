@@ -71,7 +71,8 @@ function ExpenseListByMonth({ filterMonth }) {
               <StrDateItemWrapDiv>
                 <span>{expense.date}</span>
                 <span>
-                  {expense.item} - {expense.description}
+                  {expense.item} - {expense.description} (by {expense.createdBy}
+                  )
                 </span>
               </StrDateItemWrapDiv>
               <span>{formattedAmount(expense.amount)}원</span>

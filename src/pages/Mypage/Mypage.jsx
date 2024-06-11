@@ -1,4 +1,4 @@
-import { QueryClient, useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -9,6 +9,7 @@ function Mypage() {
   const user = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.accessToken);
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   const [formData, setFormData] = useState({
     nickname: user?.nickname || "",
@@ -31,7 +32,7 @@ function Mypage() {
     },
     onSuccess: (data) => {
       dispatch(updateUser(data));
-      QueryClient.invalidateQueries(["user", token]); // 쿼리 초기화
+      queryClient.invalidateQueries(["user", token]); // 쿼리 초기화
       toast.success("프로필이 성공적으로 업데이트되었습니다.");
     },
     onError: (error) => {

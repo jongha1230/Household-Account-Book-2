@@ -9,6 +9,7 @@ const useExpenseForm = (initialExpense, onSubmit) => {
   const { isAlertModalOpen, alertMessage } = useSelector(
     (state) => state.modal
   );
+  const user = useSelector((state) => state.auth.user);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -36,6 +37,7 @@ const useExpenseForm = (initialExpense, onSubmit) => {
     onSubmit({
       ...expense,
       amount: parseFloat(amount),
+      createdBy: user.nickname,
     });
   };
 

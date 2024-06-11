@@ -20,7 +20,7 @@ const StrSection = styled.section`
 function Homepage() {
   const [filterMonth, setFilterMonth] = useState("");
   return (
-    <StrMain className="main-container">
+    <StrMain>
       <StrSection>
         <ExpenseForm />
       </StrSection>

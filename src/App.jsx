@@ -1,19 +1,21 @@
-import { logInSuccess } from "@redux/slices/authSlice";
 import { useQuery } from "@tanstack/react-query";
-import api from "api/api";
+
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 import "./App.css";
 import GlobalStyle from "./GlobalStyle";
-import QueryProvider from "./query/QueryProvider";
+import api from "./api/api";
+import { logInSuccess } from "./redux/slices/authSlice";
 import router from "./routes/router.jsx";
 
 const fetchUser = async (token) => {
   const response = await api.auth.getUser(token);
-  return response.data;
+
+  return response;
 };
 
 function App() {
@@ -39,7 +41,7 @@ function App() {
   }, [token, data, dispatch]);
 
   return (
-    <QueryProvider>
+    <>
       <GlobalStyle />
       <RouterProvider router={router} />
       <ToastContainer
@@ -53,7 +55,7 @@ function App() {
         draggable
         pauseOnHover
       />
-    </QueryProvider>
+    </>
   );
 }
 

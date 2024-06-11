@@ -4,6 +4,16 @@
       "id": "test23",
       "password": "test23",
       "nickname": "test23"
+    },
+    {
+      "id": "blahblah",
+      "password": "blahblah",
+      "nickname": "blahblah"
+    },
+    {
+      "id": "test이름",
+      "password": "blahblah2",
+      "nickname": "blahblah2"
     }
   ],
   "expense": [

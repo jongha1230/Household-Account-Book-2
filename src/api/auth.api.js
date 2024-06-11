@@ -18,7 +18,7 @@ class AuthAPI {
       password,
       nickname,
     });
-    console.log(response);
+
     return response.data;
   }
 
@@ -39,6 +39,7 @@ class AuthAPI {
         Authorization: `Bearer ${accessToken}`,
       },
     });
+
     return response.data;
   }
 

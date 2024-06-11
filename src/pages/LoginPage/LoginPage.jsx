@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import api from "../../api/api";
 
 function LoginPage() {
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -93,10 +93,10 @@ function LoginPage() {
         nickname: formData.nickname,
       });
 
-      console.log("Register Response:", response);
+      const message = response.message;
 
-      toast.success("회원가입이 완료되었습니다. 이제 로그인해주세요.");
-      setIsLogin(true); // 회원가입 완료 후 로그인 폼으로 전환
+      toast.success(message);
+      setIsLogin(true);
     } catch (error) {
       console.error("Register Error:", error);
       if (error.response && error.response.status === 409) {
@@ -119,13 +119,13 @@ function LoginPage() {
 
         {!isLogin && (
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="name">
+            <label className="block text-gray-700 mb-2" htmlFor="nickname">
               이름
             </label>
             <input
               type="text"
-              id="name"
-              name="name"
+              id="nickname"
+              name="nickname"
               value={formData.nickname}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded"

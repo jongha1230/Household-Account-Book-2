@@ -1,44 +1,105 @@
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import api from "../../api/api";
 
 function LoginPage() {
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
     name: "",
-    email: "",
   });
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      navigate("/");
+    }
+  }, [navigate]);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleLoginSubmit = (e) => {
-    e.preventDefault();
-    // 로그인 처리 로직 추가
-    console.log("로그인 정보:", {
-      username: formData.username,
-      password: formData.password,
-    });
+  const { mutateAsync: logIn } = useMutation({
+    mutationFn: ({ id, password }) => api.auth.loginUser(id, password),
+  });
+
+  const { mutateAsync: register } = useMutation({
+    mutationFn: ({ id, password, nickname }) =>
+      api.auth.registerUser(id, password, nickname),
+  });
+
+  const handleLoginSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await logIn({
+        id: formData.username,
+        password: formData.password,
+      });
+
+      console.log("Login Response:", response);
+
+      const { accessToken } = response;
+      localStorage.setItem("accessToken", accessToken);
+      navigate("/");
+      toast.success("로그인 성공");
+    } catch (error) {
+      console.error("Login Error:", error);
+      toast.error("로그인 실패");
+    }
   };
 
-  const handleSignupSubmit = (e) => {
-    e.preventDefault();
+  const handleSignupSubmit = async (event) => {
+    event.preventDefault();
+
     // 유효성 검사
-    if (!formData.name || !formData.email || !formData.password) {
+    if (!formData.username || !formData.password || !formData.name) {
       toast.error("모든 필드를 입력하세요.");
       return;
     }
-    // 회원가입 처리 로직 추가
-    console.log("회원가입 정보:", {
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-    });
-    setIsLogin(true); // 회원가입 완료 후 로그인 폼으로 전환
-    toast.success("회원가입이 완료되었습니다. 이제 로그인해주세요.");
+
+    // 아이디 유효성 검사
+    if (formData.username.length < 4 || formData.username.length > 10) {
+      toast.error("아이디는 4~10 글자로 입력하세요.");
+      return;
+    }
+
+    // 비밀번호 유효성 검사
+    if (formData.password.length < 4 || formData.password.length > 15) {
+      toast.error("비밀번호는 4~15 글자로 입력하세요.");
+      return;
+    }
+
+    // 닉네임 유효성 검사
+    if (formData.name.length < 1 || formData.name.length > 10) {
+      toast.error("닉네임은 1~10 글자로 입력하세요.");
+      return;
+    }
+
+    try {
+      const response = await register({
+        id: formData.username,
+        password: formData.password,
+        nickname: formData.name,
+      });
+
+      console.log("Register Response:", response);
+
+      toast.success("회원가입이 완료되었습니다. 이제 로그인해주세요.");
+      setIsLogin(true); // 회원가입 완료 후 로그인 폼으로 전환
+    } catch (error) {
+      console.error("Register Error:", error);
+      if (error.response && error.response.status === 409) {
+        toast.error("이미 존재하는 사용자 이름입니다. 다른 이름을 사용하세요.");
+      } else {
+        toast.error("회원가입 실패");
+      }
+    }
   };
 
   return (
@@ -69,21 +130,17 @@ function LoginPage() {
         )}
 
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="email">
-            {isLogin ? "이메일 또는 사용자 이름" : "이메일"}
+          <label className="block text-gray-700 mb-2" htmlFor="username">
+            사용자 이름
           </label>
           <input
             type="text"
-            id={isLogin ? "username" : "email"}
-            name={isLogin ? "username" : "email"}
-            value={isLogin ? formData.username : formData.email}
+            id="username"
+            name="username"
+            value={formData.username}
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
-            placeholder={
-              isLogin
-                ? "이메일 또는 사용자 이름을 입력하세요"
-                : "이메일을 입력하세요"
-            }
+            placeholder="사용자 이름을 입력하세요"
           />
         </div>
 

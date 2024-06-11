@@ -1,16 +1,9 @@
 {
   "users": [
     {
-      "id": "1",
-      "name": "John Doe",
-      "email": "john@example.com",
-      "password": "password123"
-    },
-    {
-      "id": "2",
-      "name": "Jane Smith",
-      "email": "jane@example.com",
-      "password": "password456"
+      "id": "test23",
+      "password": "test23",
+      "nickname": "test23"
     }
   ],
   "expense": [
@@ -39,7 +32,7 @@
       "id": "25600f72-99b4-41z7-e4h6-47312365e2f8",
       "date": "2024-05-02",
       "item": "간식",
-      "amount": 500,
+      "amount": 3500,
       "description": "아이스크림"
     },
     {
@@ -60,7 +53,7 @@
       "id": "24312f70-97q2-14a7-a9c2-47132950e2t8",
       "date": "2024-05-02",
       "item": "도서",
-      "amount": 75000,
+      "amount": 175000,
       "description": "자율주행차량 운전주행모드 자동 전환용 인식률 90% 이상의 다중 센서 기반 운전자 상태 인식 및 상황 인식 원천 기술 개발"
     }
   ]

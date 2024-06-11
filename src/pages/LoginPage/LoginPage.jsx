@@ -1,5 +1,7 @@
+import { logInSuccess } from "@redux/slices/authSlice";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import api from "../../api/api";
@@ -9,9 +11,10 @@ function LoginPage() {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
-    name: "",
+    nickname: "",
   });
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -42,10 +45,12 @@ function LoginPage() {
         password: formData.password,
       });
 
-      console.log("Login Response:", response);
+      const { accessToken, userId, avatar, nickname } = response;
 
-      const { accessToken } = response;
       localStorage.setItem("accessToken", accessToken);
+      dispatch(
+        logInSuccess({ accessToken, user: { id: userId, avatar, nickname } })
+      );
       navigate("/");
       toast.success("로그인 성공");
     } catch (error) {
@@ -58,7 +63,7 @@ function LoginPage() {
     event.preventDefault();
 
     // 유효성 검사
-    if (!formData.username || !formData.password || !formData.name) {
+    if (!formData.username || !formData.password || !formData.nickname) {
       toast.error("모든 필드를 입력하세요.");
       return;
     }
@@ -76,7 +81,7 @@ function LoginPage() {
     }
 
     // 닉네임 유효성 검사
-    if (formData.name.length < 1 || formData.name.length > 10) {
+    if (formData.nickname.length < 1 || formData.nickname.length > 10) {
       toast.error("닉네임은 1~10 글자로 입력하세요.");
       return;
     }
@@ -85,7 +90,7 @@ function LoginPage() {
       const response = await register({
         id: formData.username,
         password: formData.password,
-        nickname: formData.name,
+        nickname: formData.nickname,
       });
 
       console.log("Register Response:", response);
@@ -121,7 +126,7 @@ function LoginPage() {
               type="text"
               id="name"
               name="name"
-              value={formData.name}
+              value={formData.nickname}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded"
               placeholder="이름을 입력하세요"

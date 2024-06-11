@@ -1,9 +1,9 @@
+import ExpenseForm from "@components/ExpenseForm";
+import ExpenseListByMonth from "@components/ExpenseListByMonth";
 import ExpenseSummaryByMonth from "@components/ExpenseSummaryByMonth";
+import MonthlyExpenses from "@components/MonthlyExpenses";
 import { useState } from "react";
 import styled from "styled-components";
-import ExpenseForm from "../../components/ExpenseForm";
-import ExpenseListByMonth from "../../components/ExpenseListByMonth";
-import MonthlyExpenses from "../../components/MonthlyExpenses";
 
 const StrMain = styled.main`
   display: flex;

@@ -5,15 +5,7 @@ export const loadFetchedData = createAsyncThunk(
   "fetchedData/loadFetchedData",
   async () => {
     const fetchedData = await fetchData();
-    const localData = JSON.parse(localStorage.getItem("dataItem")) || [];
-    const combinedData = [
-      ...fetchedData.filter(
-        (item) => !localData.some((localItem) => localItem.id === item.id)
-      ),
-      ...localData,
-    ];
-
-    return combinedData;
+    return fetchedData;
   }
 );
 

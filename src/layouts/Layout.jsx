@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import Navigation from "./common/Navigation";
+import Navigation from "./common/Navigation/Navigation";
 
 function Layout() {
   return (

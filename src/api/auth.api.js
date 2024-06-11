@@ -13,9 +13,8 @@ class AuthAPI {
       nickname,
     });
     // JSON Server에 데이터 저장 요청
-    await this.#client.post("http://localhost:3000/users", {
+    await this.#client.post("http://localhost:3000/userList", {
       id,
-      password,
       nickname,
     });
 
@@ -44,13 +43,25 @@ class AuthAPI {
   }
 
   // 프로필 이미지 및 닉네임 변경
-  async updateProfile(formData, accessToken) {
+  async updateProfile(formData, accessToken, userId) {
     const response = await this.#client.patch("/profile", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${accessToken}`,
       },
     });
+
+    // JSON Server에 데이터 업데이트
+    const { nickname } = response.data;
+
+    const existingUsers = await this.#client.get(
+      "http://localhost:3000/userList"
+    );
+    const user = existingUsers.data.find((user) => user.id === userId);
+    await this.#client.patch(`http://localhost:3000/userList/${user.id}`, {
+      nickname,
+    });
+
     return response.data;
   }
 }

@@ -2,20 +2,24 @@ import axios from "axios";
 import AuthAPI from "./auth.api";
 import ExpenseAPI from "./expense.api";
 
-const BASE_URL = "https://moneyfulpublicpolicy.co.kr/";
+const AUTH_BASE_URL = "https://moneyfulpublicpolicy.co.kr/";
+const EXPENSE_BASE_URL = "http://localhost:3000/expense";
 
 class API {
-  #baseURL = BASE_URL;
-  #client;
+  #authBaseURL = AUTH_BASE_URL;
+  #expenseBaseURL = EXPENSE_BASE_URL;
+  #authClient;
+  #expenseClient;
 
   auth;
   expense;
 
   constructor() {
-    this.#client = axios.create({ baseURL: this.#baseURL });
+    this.#authClient = axios.create({ baseURL: this.#authBaseURL });
+    this.#expenseClient = axios.create({ baseURL: this.#expenseBaseURL });
 
-    this.auth = new AuthAPI(this.#client);
-    this.expense = new ExpenseAPI(this.#client);
+    this.auth = new AuthAPI(this.#authClient);
+    this.expense = new ExpenseAPI(this.#expenseClient);
   }
 }
 

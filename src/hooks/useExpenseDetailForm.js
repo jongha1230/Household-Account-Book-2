@@ -1,15 +1,32 @@
 import dateValidator from "@components/dateValidator";
 import { closeAlertModal, openAlertModal } from "@redux/slices/modalSlice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { v4 as uuidv4 } from "uuid";
 
-const useExpenseForm = (initialExpense, onSubmit) => {
-  const [expense, setExpense] = useState(initialExpense);
+const useExpenseCreateForm = (initialExpense, onSubmit) => {
+  const [expense, setExpense] = useState({
+    date: "",
+    item: "",
+    amount: "",
+    description: "",
+  });
   const dispatch = useDispatch();
   const { isAlertModalOpen, alertMessage } = useSelector(
     (state) => state.modal
   );
   const user = useSelector((state) => state.auth.user);
+
+  useEffect(() => {
+    if (initialExpense) {
+      setExpense({
+        date: initialExpense.date || "",
+        item: initialExpense.item || "",
+        amount: initialExpense.amount || "",
+        description: initialExpense.description || "",
+      });
+    }
+  }, [initialExpense]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -35,9 +52,11 @@ const useExpenseForm = (initialExpense, onSubmit) => {
     }
 
     onSubmit({
+      id: initialExpense.id || uuidv4(),
       ...expense,
       amount: parseFloat(amount),
       createdBy: user.nickname,
+      userId: user.id,
     });
   };
 
@@ -52,4 +71,4 @@ const useExpenseForm = (initialExpense, onSubmit) => {
   };
 };
 
-export default useExpenseForm;
+export default useExpenseCreateForm;

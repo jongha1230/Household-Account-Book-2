@@ -2,21 +2,34 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { AlertModal, ConfirmModal } from "@components/Modal";
-import { removeExpense, updateExpense } from "@redux/slices/fetchedDataSlice";
 import { closeConfirmModal, openConfirmModal } from "@redux/slices/modalSlice";
-import useExpenseDetail from "../../hooks/useExpenseDetail";
 
-import { useRef } from "react";
+import { useEffect } from "react";
 import { toast } from "react-toastify";
-import useExpenseForm from "../../hooks/useExpenseForm";
+import useExpenseDetailForm from "../../hooks/useExpenseDetailForm";
+import {
+  useDeleteExpense,
+  useExpenseDetail,
+  useUpdateExpense,
+} from "../../hooks/useExpenseQueries/useExpenseQueries";
 import { StrForm } from "./ExpenseDetail.styled";
 
 function ExpenseDetail() {
   const { itemId } = useParams();
-  const originalExpense = useExpenseDetail(itemId);
+  const { data: initialExpense, isLoading, error } = useExpenseDetail(itemId);
+  const { mutate: updateExpense } = useUpdateExpense();
+  const { mutate: deleteExpense } = useDeleteExpense();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isConfirmModalOpen } = useSelector((state) => state.modal);
+  const user = useSelector((state) => state.auth.user);
+
+  useEffect(() => {
+    if (!itemId) {
+      toast.error("잘못된 접근입니다.");
+      navigate("/");
+    }
+  }, [itemId, navigate]);
 
   const {
     expense,
@@ -25,25 +38,34 @@ function ExpenseDetail() {
     isAlertModalOpen,
     alertMessage,
     closeAlertModal,
-  } = useExpenseForm(originalExpense, onSubmit);
-
-  const dateRef = useRef(null);
-  const itemRef = useRef(null);
-  const amountRef = useRef(null);
-  const descriptionRef = useRef(null);
+  } = useExpenseDetailForm(initialExpense, onSubmit);
 
   function onSubmit(modifiedExpense) {
-    dispatch(updateExpense(modifiedExpense));
-    toast.success("수정이 완료되었습니다.");
-    navigate("/");
+    if (initialExpense.userId === user.id) {
+      updateExpense(
+        { itemId, updatedExpense: modifiedExpense },
+        {
+          onSuccess: () => {
+            toast.success("수정이 완료되었습니다.");
+            navigate("/");
+          },
+          onError: (error) => {
+            toast.error("수정 실패: " + error.message);
+          },
+        }
+      );
+    }
   }
 
+  console.log(expense);
   const handleDelete = () => {
-    dispatch(openConfirmModal());
+    if (initialExpense.userId === user.id) {
+      dispatch(openConfirmModal());
+    }
   };
 
   const handleConfirmDelete = () => {
-    dispatch(removeExpense(originalExpense));
+    deleteExpense(itemId);
     dispatch(closeConfirmModal());
     toast.warn("삭제 되었습니다.");
     navigate("/");
@@ -53,6 +75,11 @@ function ExpenseDetail() {
     navigate(-1);
   };
 
+  if (isLoading) return <p>로딩 중...</p>;
+  if (error)
+    return <p>데이터를 불러오는 중 오류가 발생했습니다: {error.message}</p>;
+  const isOwner = initialExpense.userId === user.id;
+
   return (
     <div className="main-container">
       <StrForm onSubmit={handleFormSubmit}>
@@ -61,45 +88,57 @@ function ExpenseDetail() {
           type="text"
           id="date"
           name="date"
-          defaultValue={expense.date}
+          value={expense.date}
           placeholder="YYYY-MM-DD"
-          ref={dateRef}
           onChange={handleInputChange}
+          disabled={!isOwner}
         />
         <label htmlFor="item">항목</label>
         <input
           type="text"
           id="item"
           name="item"
-          defaultValue={expense.item}
+          value={expense.item}
           placeholder="지출 항목"
-          ref={itemRef}
+          onChange={handleInputChange}
+          disabled={!isOwner}
         />
         <label htmlFor="amount">금액</label>
         <input
           type="number"
           id="amount"
           name="amount"
-          defaultValue={expense.amount}
+          value={expense.amount}
           placeholder="0"
-          ref={amountRef}
+          onChange={handleInputChange}
+          disabled={!isOwner}
         />
         <label htmlFor="item">내용</label>
         <input
           type="text"
           id="description"
           name="description"
-          defaultValue={expense.description}
+          value={expense.description}
           placeholder="지출 내용"
-          ref={descriptionRef}
+          onChange={handleInputChange}
+          disabled={!isOwner}
         />
         <div>
-          <button type="submit" className="edit-btn">
-            수정
-          </button>
-          <button type="button" className="delete-btn" onClick={handleDelete}>
-            삭제
-          </button>
+          {isOwner ? (
+            <>
+              <button type="submit" className="edit-btn">
+                수정
+              </button>
+              <button
+                type="button"
+                className="delete-btn"
+                onClick={handleDelete}
+              >
+                삭제
+              </button>
+            </>
+          ) : null}
+
           <button type="button" className="back-btn" onClick={handleGoBack}>
             뒤로가기
           </button>

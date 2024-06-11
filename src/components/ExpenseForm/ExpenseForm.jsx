@@ -1,10 +1,9 @@
 import { AlertModal } from "@components/Modal";
-import { addExpense } from "@redux/slices/fetchedDataSlice";
 import { useRef } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { v4 as uuidv4 } from "uuid";
-import useExpenseForm from "../../hooks/useExpenseForm";
+import useExpenseCreateForm from "../../hooks/useExpenseCreateForm";
+import { useCreateExpense } from "../../hooks/useExpenseQueries/useExpenseQueries";
 import { StrForm } from "./ExpenseForm.styled";
 
 function ExpenseForm() {
@@ -17,15 +16,23 @@ function ExpenseForm() {
     isAlertModalOpen,
     alertMessage,
     closeAlertModal,
-  } = useExpenseForm(initialExpense, onSubmit);
+  } = useExpenseCreateForm(initialExpense, onSubmit);
+  const { mutate: createExpense } = useCreateExpense();
 
   const dateInputRef = useRef(null);
   const dispatch = useDispatch();
 
   function onSubmit(newExpense) {
-    dispatch(addExpense({ id: uuidv4(), ...newExpense }));
-    toast.success("등록되었습니다.");
-    setExpense(initialExpense);
+    console.log("Submitting new expense:", newExpense);
+    createExpense(newExpense, {
+      onSuccess: () => {
+        toast.success("등록되었습니다.");
+        setExpense(initialExpense);
+      },
+      onError: (error) => {
+        toast.error("등록 실패: " + error.message);
+      },
+    });
   }
 
   return (

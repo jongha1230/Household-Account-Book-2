@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-import { loadFetchedData } from "@redux/slices/fetchedDataSlice";
+import { useGetExpenses } from "../../hooks/useExpenseQueries/useExpenseQueries";
+
 import {
   ArrowIcon,
   NoExpenseDiv,
@@ -14,40 +14,41 @@ import {
 } from "./ExpenseListByMonth.styled";
 
 function ExpenseListByMonth({ filterMonth }) {
-  const dispatch = useDispatch();
-  const fetchedData = useSelector((state) => state.fetchedData);
+  const { data: expenses, isLoading } = useGetExpenses();
   const [filteredData, setFilteredData] = useState([]);
   const [sortOption, setSortOption] = useState("amount");
 
   useEffect(() => {
-    dispatch(loadFetchedData());
-  }, [dispatch]);
+    if (expenses && expenses.length > 0) {
+      const filtered = expenses.filter((item) => {
+        const month = new Date(item.date).getMonth();
+        return month === filterMonth;
+      });
 
-  useEffect(() => {
-    const filtered = fetchedData.filter((item) => {
-      const month = new Date(item.date).getMonth();
-      return month === filterMonth;
-    });
+      switch (sortOption) {
+        case "amount":
+          filtered.sort((a, b) => b.amount - a.amount);
+          break;
+        case "category":
+          filtered.sort((a, b) => a.item.localeCompare(b.item));
+          break;
+        case "date":
+          filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
+          break;
+        default:
+          break;
+      }
 
-    switch (sortOption) {
-      case "amount":
-        filtered.sort((a, b) => b.amount - a.amount); // 가격 순
-        break;
-      case "category":
-        filtered.sort((a, b) => a.item.localeCompare(b.item)); // 항목 순
-        break;
-      case "date":
-        filtered.sort((a, b) => new Date(a.date) - new Date(b.date)); // 최신 순
-        break;
-      default:
-        break;
+      setFilteredData(filtered);
     }
-
-    setFilteredData(filtered);
-  }, [fetchedData, filterMonth, sortOption]);
+  }, [expenses, filterMonth, sortOption]);
 
   const formattedAmount = (amount) =>
     new Intl.NumberFormat("ko-KR").format(amount);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <StrDiv>

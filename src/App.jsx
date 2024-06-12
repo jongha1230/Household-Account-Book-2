@@ -9,7 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import GlobalStyle from "./GlobalStyle";
 import api from "./api/api";
-import { logInSuccess } from "./redux/slices/authSlice";
+import { logInSuccess, logOut } from "./redux/slices/authSlice";
 import router from "./routes/router.jsx";
 
 const fetchUser = async (token) => {
@@ -23,7 +23,7 @@ function App() {
     useSelector((state) => state.auth.accessToken) ??
     localStorage.getItem("accessToken");
 
-  const { data } = useQuery({
+  const { data, error } = useQuery({
     queryKey: ["user", token],
     queryFn: () => fetchUser(token),
     enabled: !!token,
@@ -35,8 +35,11 @@ function App() {
   useEffect(() => {
     if (data) {
       dispatch(logInSuccess({ accessToken: token, user: data }));
+    } else if (error) {
+      console.error(error);
+      dispatch(logOut());
     }
-  }, [token, data, dispatch]);
+  }, [token, data, dispatch, error]);
 
   return (
     <>

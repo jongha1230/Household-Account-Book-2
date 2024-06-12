@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useGetExpenses } from "../../hooks/useExpenseQueries/useExpenseQueries";
 import {
   CategoryDiv,
   CategoryWrapDiv,
@@ -11,10 +11,16 @@ import {
 function ExpenseSummaryByMonth({ filterMonth }) {
   const [totalMonthlyExpense, setTotalMonthlyExpense] = useState(0);
   const [categoryExpenses, setCategoryExpenses] = useState({});
-  const fetchedData = useSelector((state) => state.fetchedData);
+  const { data: expenses, isLoading, error } = useGetExpenses();
 
   useEffect(() => {
-    const filtered = fetchedData.filter((item) => {
+    if (!expenses || expenses.length === 0) {
+      setCategoryExpenses({});
+      setTotalMonthlyExpense(0);
+      return;
+    }
+
+    const filtered = expenses.filter((item) => {
       const month = new Date(item.date).getMonth();
       return month === filterMonth;
     });
@@ -52,7 +58,7 @@ function ExpenseSummaryByMonth({ filterMonth }) {
       )
     );
     setCategoryExpenses(updatedCategoryExpenses);
-  }, [fetchedData, filterMonth]);
+  }, [expenses, filterMonth]);
 
   const formattedAmount = (amount) =>
     new Intl.NumberFormat("ko-KR").format(amount);
@@ -68,6 +74,14 @@ function ExpenseSummaryByMonth({ filterMonth }) {
     const percentage = (categoryExpense / totalExpense) * 100;
     return percentage.toFixed(2) + "%";
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading expenses...</div>;
+  }
 
   return (
     <>

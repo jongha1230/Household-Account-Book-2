@@ -57,7 +57,6 @@ function ExpenseDetail() {
     }
   }
 
-  console.log(expense);
   const handleDelete = () => {
     if (initialExpense.userId === user.id) {
       dispatch(openConfirmModal());

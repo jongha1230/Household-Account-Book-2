@@ -2,7 +2,7 @@
   "userList": [
     {
       "id": "qconstOu",
-      "nickname": "이렇게1237",
+      "nickname": "이렇게12374",
       "userId": 1
     },
     {
@@ -73,15 +73,6 @@
       "amount": 100000,
       "description": "세광양대창",
       "createdBy": "Me"
-    },
-    {
-      "id": "cde52fcd-8f2f-46de-a5e4-664c79dd101b",
-      "date": "2024-01-12",
-      "item": "테스트",
-      "amount": 1000,
-      "description": "5000",
-      "createdBy": "이렇게1237",
-      "userId": "qconstOu"
     },
     {
       "id": "4d711989-7193-4f35-9650-458a9449d12e",

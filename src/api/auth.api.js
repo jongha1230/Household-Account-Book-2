@@ -23,7 +23,7 @@ class AuthAPI {
 
   // 로그인
   async loginUser(id, password) {
-    const response = await this.#client.post("/login", {
+    const response = await this.#client.post("/login?expiresIn=10m", {
       id,
       password,
     });

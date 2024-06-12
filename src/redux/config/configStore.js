@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "../slices/authSlice";
-import fetchedDataReducer from "../slices/fetchedDataSlice";
+// import fetchedDataReducer from "../slices/fetchedDataSlice";
 import modalReducer from "../slices/modalSlice";
 
 const localStorageMiddleware = (store) => (next) => (action) => {
@@ -13,7 +13,7 @@ const localStorageMiddleware = (store) => (next) => (action) => {
 
 const store = configureStore({
   reducer: {
-    fetchedData: fetchedDataReducer,
+    // fetchedData: fetchedDataReducer,
     modal: modalReducer,
     auth: authReducer,
   },

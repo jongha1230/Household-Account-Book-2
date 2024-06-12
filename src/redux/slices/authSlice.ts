@@ -1,8 +1,20 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { Draft, PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+interface AuthState {
+  isAuthenticated: boolean;
+  accessToken: string | null;
+  user: User | null;
+}
+
+interface User {
+  id: string;
+  avatar: string | null;
+  nickname: string;
+}
+
+const initialState: AuthState = {
   isAuthenticated: false,
-  accessToken: localStorage.getItem("accessToken") || null,
+  accessToken: localStorage.getItem("accessToken"),
   user: null,
 };
 
@@ -10,7 +22,10 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    logInSuccess: (state, action) => {
+    logInSuccess: (
+      state: Draft<AuthState>,
+      action: PayloadAction<{ accessToken: string; user: User }>
+    ) => {
       state.isAuthenticated = true;
       state.accessToken = action.payload.accessToken;
       state.user = action.payload.user;

@@ -1,6 +1,12 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+interface ModalState {
+  isConfirmModalOpen: boolean;
+  isAlertModalOpen: boolean;
+  alertMessage: string;
+}
+
+const initialState: ModalState = {
   isConfirmModalOpen: false,
   isAlertModalOpen: false,
   alertMessage: "",
@@ -16,7 +22,7 @@ const modalSlice = createSlice({
     closeConfirmModal: (state) => {
       state.isConfirmModalOpen = false;
     },
-    openAlertModal: (state, action) => {
+    openAlertModal: (state, action: PayloadAction<string>) => {
       state.isAlertModalOpen = true;
       state.alertMessage = action.payload;
     },

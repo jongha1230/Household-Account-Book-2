@@ -36,6 +36,9 @@ function App() {
     enabled: !!token,
     onError: (error) => {
       console.error("Error fetching user:", error);
+      if (error.message === "Unauthorized") {
+        dispatch(logOut());
+      }
     },
   });
 

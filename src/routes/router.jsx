@@ -19,7 +19,7 @@ const router = createBrowserRouter([
           {
             path: "/",
             element: <Homepage />,
-            loader: <HomePageLoader />,
+            loader: HomePageLoader,
           },
           {
             path: "mypage",

@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { useGetExpenses } from "../../hooks/useExpenseQueries/useExpenseQueries";
-
 import {
   ArrowIcon,
   NoExpenseDiv,
@@ -13,8 +11,7 @@ import {
   StrItemWrapDiv,
 } from "./ExpenseListByMonth.styled";
 
-function ExpenseListByMonth({ filterMonth }) {
-  const { data: expenses, isLoading } = useGetExpenses();
+function ExpenseListByMonth({ expenses, filterMonth }) {
   const [filteredData, setFilteredData] = useState([]);
   const [sortOption, setSortOption] = useState("amount");
 
@@ -46,7 +43,7 @@ function ExpenseListByMonth({ filterMonth }) {
   const formattedAmount = (amount) =>
     new Intl.NumberFormat("ko-KR").format(amount);
 
-  if (isLoading) {
+  if (!expenses) {
     return <div>Loading...</div>;
   }
 

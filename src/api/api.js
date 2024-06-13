@@ -3,7 +3,7 @@ import AuthAPI from "./auth.api";
 import ExpenseAPI from "./expense.api";
 
 const AUTH_BASE_URL = "https://moneyfulpublicpolicy.co.kr/";
-const EXPENSE_BASE_URL = "http://localhost:3000";
+const EXPENSE_BASE_URL = "https://pretty-hail-plain.glitch.me";
 
 class API {
   #authBaseURL = AUTH_BASE_URL;

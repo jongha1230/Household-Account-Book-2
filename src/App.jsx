@@ -18,7 +18,6 @@ const fetchUser = async (token) => {
     return response;
   } catch (error) {
     if (error.message === "Unauthorized") {
-      // Handle 401 Unauthorized error by logging out the user
       return undefined;
     }
     throw error;

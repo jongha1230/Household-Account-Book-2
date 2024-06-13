@@ -5,6 +5,11 @@ import { defineConfig } from "vite";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  build: {
+    rollupOptions: {
+      external: ["@tanstack/react-query", "@tanstack/react-query-devtools"],
+    },
+  },
   resolve: {
     alias: {
       "@components": fileURLToPath(

@@ -13,8 +13,16 @@ import { logInSuccess, logOut } from "./redux/slices/authSlice";
 import router from "./routes/router.jsx";
 
 const fetchUser = async (token) => {
-  const response = await api.auth.getUser(token);
-  return response;
+  try {
+    const response = await api.auth.getUser(token);
+    return response;
+  } catch (error) {
+    if (error.message === "Unauthorized") {
+      // Handle 401 Unauthorized error by logging out the user
+      return undefined;
+    }
+    throw error;
+  }
 };
 
 function App() {

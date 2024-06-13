@@ -32,14 +32,20 @@ class AuthAPI {
 
   // 회원 정보 조회
   async getUser(accessToken) {
-    const response = await this.#client.get("/user", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    return response.data;
+    try {
+      const response = await this.#client.get("/user", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        throw new Error("Unauthorized");
+      }
+      throw new Error(`Fetching user failed: ${error.message}`);
+    }
   }
 
   // 프로필 이미지 및 닉네임 변경

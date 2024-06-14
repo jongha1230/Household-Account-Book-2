@@ -2,8 +2,8 @@ import axios from "axios";
 import AuthAPI from "./auth.api";
 import ExpenseAPI from "./expense.api";
 
-const AUTH_BASE_URL = "https://moneyfulpublicpolicy.co.kr/";
-const EXPENSE_BASE_URL = "https://nice-calm-fang.glitch.me";
+export const AUTH_BASE_URL = "https://moneyfulpublicpolicy.co.kr/";
+export const EXPENSE_BASE_URL = "https://nice-calm-fang.glitch.me";
 
 class API {
   #authBaseURL = AUTH_BASE_URL;

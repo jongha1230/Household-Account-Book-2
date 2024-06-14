@@ -1,3 +1,5 @@
+import { EXPENSE_BASE_URL } from "./api";
+
 class AuthAPI {
   #client;
 
@@ -13,7 +15,7 @@ class AuthAPI {
       nickname,
     });
     // JSON Server에 데이터 저장 요청
-    await this.#client.post("http://localhost:3000/userList", {
+    await this.#client.post(`${EXPENSE_BASE_URL}/userList`, {
       id,
       nickname,
     });
@@ -61,10 +63,10 @@ class AuthAPI {
     const { nickname } = response.data;
 
     const existingUsers = await this.#client.get(
-      "http://localhost:3000/userList"
+      `${EXPENSE_BASE_URL}/userList`
     );
     const user = existingUsers.data.find((user) => user.id === userId);
-    await this.#client.patch(`http://localhost:3000/userList/${user.id}`, {
+    await this.#client.patch(`${EXPENSE_BASE_URL}/userList/${user.id}`, {
       nickname,
     });
 
